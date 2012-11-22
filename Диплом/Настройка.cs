@@ -186,7 +186,7 @@ namespace Диплом
                 textBox18.Text = Properties.Settings.Default.CellSize;
 
                 label17.Text = Properties.Settings.Default.Map;
-                pictureBox1.Image = Image.FromFile(Properties.Settings.Default.Map);
+                //pictureBox1.Image = Image.FromFile(Properties.Settings.Default.Map);
                 openFileDialog1.FileName = Properties.Settings.Default.Map;
 
                 textBox3.Text = Properties.Settings.Default.C;
