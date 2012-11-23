@@ -689,6 +689,7 @@ namespace Диплом
             sw.Stop();
             String time = sw.Elapsed.TotalSeconds.ToString();
             System.Diagnostics.Trace.WriteLine("time :" + time);
+            label5.Text = time;
         }
 #region Paint
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
