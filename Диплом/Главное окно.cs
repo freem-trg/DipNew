@@ -488,7 +488,11 @@ namespace Диплом
            
            // ParallelOptions ops = new ParallelOptions();
            // ops.MaxDegreeOfParallelism = 64;
-            
+
+            // *********** MAXIM **************
+            PutTestingPoint();
+            // ********************************
+
             if (_roulStart)
             {
                 _start = !_start;
@@ -840,6 +844,15 @@ namespace Диплом
                 }
             pictureBox1.Invalidate();
             }
+            // ****************** MAXIM ************************
+            System.Diagnostics.Trace.WriteLine(Cij[15].Lj[20].ConcNl.Conc);
+        }
+
+        // ***************** MAXIM **********************
+        void PutTestingPoint()
+        {
+            Cij[50].Lj[50].ConcNl.Conc = 100;
+            _roulStart = true;
         }
     }  
 }
