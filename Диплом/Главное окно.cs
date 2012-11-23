@@ -209,18 +209,24 @@ namespace Диплом
             }
         }
         public void PaintDifWind(Graphics gr)
-        {
-            for (var i = 0; i < N; i++)
-                for (var j = 0; j < N; j++)
+        {       
+            //for (var i = 0; i < N; i++)
+            System.Threading.Mutex mt = new System.Threading.Mutex();
+            Parallel.For(0, N, (i, loopState) =>
                 {
+                    for (var j = 0; j < N; j++)
+                    {
                         if (Cij[i].Lj[j].Wall == 1) gr.FillRectangle(new SolidBrush(Cij[i].Lj[j].Clr), j, i, 1, 1);
                         else
                         {
                             if (Cij[i].Lj[j].ConcNl.Conc == 0) continue;
                             var y = Convert.ToInt32(Round(Cij[i].Lj[j].ConcNl.Conc * 255 / _maxConcentationForPaint, 0));
+                            mt.WaitOne();
                             gr.FillRectangle(new SolidBrush(Color.FromArgb(y, Clr)), j, i, 1, 1);
+                            mt.ReleaseMutex();
                         }
-                }
+                    }
+                });
             pictureBox1.Invalidate();
         }
 
@@ -486,8 +492,8 @@ namespace Диплом
             // Задаем переменные для параллелизма:
            // System.Threading.ThreadPool.SetMinThreads(128, 128);
            
-           // ParallelOptions ops = new ParallelOptions();
-           // ops.MaxDegreeOfParallelism = 64;
+            ParallelOptions ops = new ParallelOptions();
+            ops.MaxDegreeOfParallelism = 64;
 
             // *********** MAXIM **************
             PutTestingPoint();
@@ -510,9 +516,9 @@ namespace Диплом
                     //фазификация
                     //Parallel.For(0, N, (i, loopState) =>
                     /// -------------------------------------------------------
-                    //Parallel.For( 0, N, ops, (i, loopState) =>
-                    for (var i = 0; i < N; i++)
-                    //{
+                    Parallel.For( 0, N, ops, (i, loopState) =>
+       //             for (var i = 0; i < N; i++)
+                    {
                         for (var j = 0; j < N; j++)
                         {
                             if (Cij[i].Lj[j].ConcNl.Conc == 0)
@@ -527,23 +533,22 @@ namespace Диплом
                                 sumc += Cij[i].Lj[j].ConcNl.Conc;
                             }
                         }
-                    //});
+                    });
 
                     //поле нечетких концентраций с учетом коэффициентов w
-                    //Parallel.For(1, N - 1, ops, (i, loopState) =>
-                    //{
-                    for (var i = 1; i < N - 1; i++)
+                    Parallel.For(1, N - 1, ops, (i, loopState) =>
+                    {
+                   // for (var i = 1; i < N - 1; i++)
                         for (var j = 1; j < N - 1; j++)
                         {
                             NewCij[i].Lj[j].ConcNl.PhazConc = RuleDifWindNl(i, j);
                         }
-                    //});
+                    });
 
                     //дефазификация
-                    //Parallel.For(1, N - 1, ops, (i, loopState) =>
+                    Parallel.For(1, N - 1, ops, (i, loopState) =>
                     //for (var i = 1; i < N - 1; i++)
-                    //{
-                    for (var i = 1; i < N - 1; i++)
+                    {
                         for (var j = 1; j < N - 1; j++)
                         {
                             if (NewCij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl == 1 &&
@@ -564,8 +569,9 @@ namespace Диплом
                                                                        : DePhazConcMct(NewCij[i].Lj[j].ConcNl.PhazConc);
                             }
                         }
-                    //});
+                    });
                     //коэффициент фи
+                    //Не параллелить пока:
                     for (var i = 1; i < N - 1; i++)
                         for (var j = 1; j < N - 1; j++)
                         {
@@ -573,8 +579,10 @@ namespace Диплом
                                                          Phi*NewCij[i].Lj[j].ConcNl.DePhazConc;
                             sumcnew += NewCij[i].Lj[j].ConcNl.Conc;
                         }
+                    
                     var sumw = W1 + W2 + W3 + W4 + W6 + W7 + W8 + W9;
                     //нормировка
+                    //Не параллелить:
                     for (var i = 1; i < N - 1; i++)
                         for (var j = 1; j < N - 1; j++)
                         {
@@ -585,17 +593,18 @@ namespace Диплом
                             else
                             {
                                 Cij[i].Lj[j].ConcNl.Conc = sumcnew != 0
-                                                              ? Round(NewCij[i].Lj[j].ConcNl.Conc*sumc/sumcnew, _round)
+                                                              ? Round(NewCij[i].Lj[j].ConcNl.Conc * sumc / sumcnew, _round)
                                                               : 0;
                             }
                         }
                     //коэффициент, учитывающий уменьшение концентрации
-                    for (var i = 1; i < N - 1; i++)
-                        for (var j = 1; j < N - 1; j++)
-                        {
-                            Cij[i].Lj[j].ConcNl.Conc = Gamma * Cij[i].Lj[j].ConcNl.Conc; 
-                        }
-                   
+                    //Не параллелить:
+                            for (var i = 1; i < N - 1; i++)
+                                for (var j = 1; j < N - 1; j++)
+                                {
+                                    Cij[i].Lj[j].ConcNl.Conc = Gamma * Cij[i].Lj[j].ConcNl.Conc;
+                                }
+
                     //стена и преграды
                     for (var i = 1; i < N - 1; i++)
                         for (var j = 1; j < N - 1; j++)
@@ -613,15 +622,17 @@ namespace Диплом
                             NewCij[i].Lj[j].ConcX -= x;
                         }
                     _maxConcentationForPaint = 0;
-                    for (var i = 0; i < N; i++)
-                        for (var j = 0; j < N; j++)
-                        {
-                            if (NewCij[i].Lj[j].ConcX == 0 && Cij[i].Lj[j].ConcNl.Conc==0) continue;
-                            Cij[i].Lj[j].ConcNl.Conc += NewCij[i].Lj[j].ConcX;
-                            if (Cij[i].Lj[j].ConcNl.Conc > _maxConcentationForPaint)
-                                _maxConcentationForPaint = Cij[i].Lj[j].ConcNl.Conc;
-                            NewCij[i].Lj[j].ConcX = 0;
-                        }
+                    //Не параллелить:
+                           for (var i = 0; i < N; i++)
+                                for (var j = 0; j < N; j++)
+                                {
+                                    if (NewCij[i].Lj[j].ConcX == 0 && Cij[i].Lj[j].ConcNl.Conc == 0) continue;
+                                    Cij[i].Lj[j].ConcNl.Conc += NewCij[i].Lj[j].ConcX;
+                                    if (Cij[i].Lj[j].ConcNl.Conc > _maxConcentationForPaint)
+                                        _maxConcentationForPaint = Cij[i].Lj[j].ConcNl.Conc;
+                                    NewCij[i].Lj[j].ConcX = 0;
+                                }
+
                     //-----------------------------------------------------------
                     _maxConcentationForFunc = _maxConcentationForPaint * 2;
                     label2.Text = Round(GetSum(), _round).ToString();
@@ -653,15 +664,18 @@ namespace Диплом
 
                         _scenariyK++;
                     }
-                    for (var i = 0; i < N; i++)
-                        for (var j = 0; j < N; j++)
-                        {
-                            if (Cij[i].Lj[j].ConcNl.Conc > 0)
-                            {
-                                Cij[i].Lj[j].AlConcentration.Add(new DataPoint(Convert.ToDouble(Round(_time, 4)),
-                                                                               Convert.ToDouble(Cij[i].Lj[j].ConcNl.Conc)));
-                            }
-                        }
+                    //Parallel.For(0, N , ops, (i, loopState) =>
+                    //    {
+                            for (var i = 0; i < N; i++)
+                                for (var j = 0; j < N; j++)
+                                {
+                                    if (Cij[i].Lj[j].ConcNl.Conc > 0)
+                                    {
+                                        Cij[i].Lj[j].AlConcentration.Add(new DataPoint(Convert.ToDouble(Round(_time, 4)),
+                                                                                       Convert.ToDouble(Cij[i].Lj[j].ConcNl.Conc)));
+                                    }
+                                }
+                    //    });
                     PaintDifWind(Gr);
                     if (_time>= 5)
                     {
@@ -674,6 +688,7 @@ namespace Диплом
             else    MessageBox.Show("Необходимо настроить параметры автомата. Настройка");
             sw.Stop();
             String time = sw.Elapsed.TotalSeconds.ToString();
+            System.Diagnostics.Trace.WriteLine("time :" + time);
         }
 #region Paint
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
