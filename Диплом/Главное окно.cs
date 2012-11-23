@@ -456,6 +456,8 @@ namespace Диплом
 
                 //Delta = Convert.ToDecimal(_properties.textBox5.Text);
                 _round = Convert.ToInt32(_properties.textBox15.Text);
+
+                PutTestingPoint();
             }
             catch (Exception)
             {
@@ -647,7 +649,7 @@ namespace Диплом
                               }
                           }
                       });
-                    //PaintDifWind(Gr);
+                    PaintDifWind(Gr);
                     if (_time>= 5 )
                     {
                         _start = !_start;
@@ -692,6 +694,7 @@ namespace Диплом
                 ProfileConc.chart1.Series[1].Points.Clear();
                 var maxX=new List<decimal>();
                 var maxY = new List<decimal>();
+
                 for (var i = 0; i < N; i++)
                 {
                     if (Cij[e.Y].Lj[i].ConcNl.Conc > 0)
@@ -705,6 +708,7 @@ namespace Диплом
                         maxY.Add(Cij[i].Lj[e.X].ConcNl.Conc * 47208);
                     }
                 }
+
                 if (maxX.Count>0)
                 {
                     ProfileConc.label4.Text += " C = " + Round(maxX.Max(),2) + " мг/м3 в точке X = " + e.X * CellSize + " м";    
@@ -771,6 +775,7 @@ namespace Диплом
             label10.Text = (e.Y*CellSize).ToString();
             label6.Text = Round(Cij[e.Y].Lj[e.X].ConcNl.Conc, _round).ToString();
             label16.Text = Cij[e.Y].Lj[e.X].Delta.ToString();
+             
         }
         //Выбор цвета
         private void label3_Click(object sender, EventArgs e)
@@ -827,12 +832,18 @@ namespace Диплом
                 }
             pictureBox1.Invalidate();
             }
+            // ****************** MAXIM ************************
+            System.Diagnostics.Trace.WriteLine(Cij[22].Lj[62].ConcNl.Conc);
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
+        // ***************** MAXIM **********************
+        void PutTestingPoint()
         {
-
+            Cij[50].Lj[50].ConcNl.Conc = 100;
+          _roulStart = true;
         }
+
+
 
     }  
 }
