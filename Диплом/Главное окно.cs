@@ -30,21 +30,21 @@ namespace Диплом
         public List<Lsi> Cij;
         public List<Lsi> NewCij;
 
-        public float C;
-        public float Gamma;
-        public float Phi;
-        public float U;
+        public double C;
+        public double Gamma;
+        public double Phi;
+        public double U;
         public double CellSize;
 
-        public float W1;
-        public float W2;
-        public float W3;
-        public float W4;
-        public float W5;
-        public float W6;
-        public float W7;
-        public float W8;
-        public float W9;
+        public double W1;
+        public double W2;
+        public double W3;
+        public double W4;
+        public double W5;
+        public double W6;
+        public double W7;
+        public double W8;
+        public double W9;
 
         private bool _roulStart;
         private bool _paintStart;
@@ -52,7 +52,7 @@ namespace Диплом
 
         public int N;
         private int _steps;
-        private float _time;
+        private double _time;
         private int _round;
         private int _scenariyK;
 
@@ -65,8 +65,8 @@ namespace Диплом
         private bool _rightMouse;
         public Point StartPaintXy;
         private List<Point> _pointForWall;
-        private float _maxConcentationForPaint;
-        private float _maxConcentationForFunc;
+        private double _maxConcentationForPaint;
+        private double _maxConcentationForFunc;
         public Color Clr;
 
         private  Настройка _properties;
@@ -88,8 +88,8 @@ namespace Диплом
             }
             public Color Clr;
             public int Wall;
-            public float Delta;
-            public float ConcX;
+            public double Delta;
+            public double ConcX;
             public ConcentrationNl ConcNl;
             public List<DataPoint> AlConcentration=new List<DataPoint>();
         }
@@ -122,16 +122,16 @@ namespace Диплом
                 }
             }
         }
-        private float GetSum()
+        private double GetSum()
         {
             return  Cij.Sum(x => x.Lj.Sum(y => y.ConcNl.Conc));
         }
-        public float Round(float valueToRound, int count)
+        public double Round(double valueToRound, int count)
         {
-            var d = (float)Math.Pow(10, count);
+            var d = (double)Math.Pow(10, count);
             valueToRound = valueToRound*d;
             var celValue = Math.Truncate(valueToRound);
-            return (valueToRound - celValue) >= .5f ? (float)(Math.Ceiling(valueToRound)/d) : (float)(celValue/d);
+            return (valueToRound - celValue) >= .5f ? (double)(Math.Ceiling(valueToRound)/d) : (double)(celValue/d);
         }
        //отрисовка
         public void PaintHand(int x1, int y1, int x2, int y2)
@@ -140,7 +140,7 @@ namespace Диплом
             {
                 try
                 {
-                    var delta = (float)Convert.ToDouble(textBox1.Text);
+                    var delta = Convert.ToDouble(textBox1.Text);
                     for (var i = x1; i <= x2; i++)
                         for (var j = y1; j <= y2; j++)
                         {
@@ -154,7 +154,7 @@ namespace Диплом
                     for (var i = x1; i <= x2; i++)
                         for (var j = y1; j <= y2; j++)
                         {
-                            var t = (float)Convert.ToDouble(8 - Cij[j - 1].Lj[i - 1].Wall -
+                            var t = Convert.ToDouble(8 - Cij[j - 1].Lj[i - 1].Wall -
                                                       Cij[j - 1].Lj[i].Wall -
                                                       Cij[j - 1].Lj[i + 1].Wall -
                                                       Cij[j].Lj[i - 1].Wall -
@@ -176,7 +176,7 @@ namespace Диплом
             }
             if (_leftMouse)
             {
-                float pointcount = 0;
+                double pointcount = 0;
                 for (var i = x1; i <= x2; i++)
                     for (var j = y1; j <= y2; j++)
                     {
@@ -231,7 +231,7 @@ namespace Диплом
         }
 
         //четкая логика
-        public float RuleDifWind(int i, int j)
+        public double RuleDifWind(int i, int j)
         {
             if (Cij[i].Lj[j].Wall == 1)
             {
@@ -256,12 +256,12 @@ namespace Диплом
         //Нечеткая логика
         public class PhazConcentration
         {
-            public PhazConcentration(float stepenPrinadl1, string s1)
+            public PhazConcentration(double stepenPrinadl1, string s1)
             {
                 StepenPrinadl = stepenPrinadl1;
                 NameFuncPrinadl = s1;
             }
-            public float StepenPrinadl;
+            public double StepenPrinadl;
             public string NameFuncPrinadl;
         }
         public class ConcentrationNl
@@ -270,52 +270,52 @@ namespace Диплом
             {
                 PhazConc = phazConc1;
             }
-            public float Conc;
-            public float DePhazConc;
+            public double Conc;
+            public double DePhazConc;
             public List<PhazConcentration> PhazConc;
         }
         //средние максимумы
-        public float WNizkie(float m)
+        public double WNizkie(double m)
         {
             var p = _maxConcentationForFunc / 2;
             return p - m * p;
         }
-        public float WSrednie1(float m)
+        public double WSrednie1(double m)
         {
             var p = _maxConcentationForFunc / 4;
             return m * p + p;
         }
-        public float WSrednie2(float m)
+        public double WSrednie2(double m)
         {
             var p1 = 3 * _maxConcentationForFunc / 4;
             var p2 = _maxConcentationForFunc / 4;
             return p1 - m * p2;
         }
-        public float WVisokie(float m)
+        public double WVisokie(double m)
         {
             var p = _maxConcentationForFunc / 2;
             return m * p + p;
         }
         //МЦТ
-        public float WNizkieX(float x)
+        public double WNizkieX(double x)
         {
             var p = _maxConcentationForFunc / 2;
             return x >= p || x < 0 ? 0 : 1 - x / p;
         }
-        public float WSrednieX(float x)
+        public double WSrednieX(double x)
         {
             var p1 = _maxConcentationForFunc / 4;
             var p2 = _maxConcentationForFunc / 2;
             var p3 = 3 * _maxConcentationForFunc / 4;
             return x <= p1 || x >= p3 ? 0 : (x > p1 && x <= p2 ? x / p1 - 1 : 3 - x / p1);
         }
-        public float WVisokieX(float x)
+        public double WVisokieX(double x)
         {
             var p = _maxConcentationForFunc / 2;
             return x <= p ? 0 : (x >= _maxConcentationForFunc ? 1 : x / p - 1);
         }
         //фазификация
-        public List<PhazConcentration> PhazConc(float conc)
+        public List<PhazConcentration> PhazConc(double conc)
         {
             return new List<PhazConcentration>
                            {
@@ -325,17 +325,17 @@ namespace Диплом
                            };
         }
         //дефазификация
-        public float MItog(float x, float m1, float m2, float m3)
+        public double MItog(double x, double m1, double m2, double m3)
         {
-            var listM = new List<float> { Math.Min(WNizkieX(x), m1), Math.Min(WSrednieX(x), m2), Math.Min(WVisokieX(x), m3) };
+            var listM = new List<double> { Math.Min(WNizkieX(x), m1), Math.Min(WSrednieX(x), m2), Math.Min(WVisokieX(x), m3) };
             return listM.Max(y => y);
         }
-        public float SimpsonX(float a, float b, float m1, float m2, float m3)
+        public double SimpsonX(double a, double b, double m1, double m2, double m3)
         {
-            const float delta = (float)0.1;
-            float fxi = 0;
-            float fxi1 = 0;
-            float fxixi1 = 0;
+            const double delta = (double)0.1;
+            double fxi = 0;
+            double fxi1 = 0;
+            double fxixi1 = 0;
             var xi = a;
             var xi1 = a + delta;
             while (xi1 <= b)
@@ -348,12 +348,12 @@ namespace Диплом
             }
             return delta / 6 * (fxi + fxi1 + 4 * fxixi1);
         }
-        public float SimpsonXx(float a, float b, float m1, float m2, float m3)
+        public double SimpsonXx(double a, double b, double m1, double m2, double m3)
         {
-            const float delta = (float)0.1;
-            float fxi = 0;
-            float fxi1 = 0;
-            float fxixi1 = 0;
+            const double delta = (double)0.1;
+            double fxi = 0;
+            double fxi1 = 0;
+            double fxixi1 = 0;
             var xi = a;
             var xi1 = a + delta;
             while (xi1 <= b)
@@ -366,7 +366,7 @@ namespace Диплом
             }
             return delta / 6 * (fxi + fxi1 + 4 * fxixi1);
         }
-        public float DePhazConcSrMax(List<PhazConcentration> listphazconc, int funcPrin)
+        public double DePhazConcSrMax(List<PhazConcentration> listphazconc, int funcPrin)
         {
             if (funcPrin == 0)  return (0 + WNizkie(listphazconc[0].StepenPrinadl))/2;
             if (funcPrin == 1) return (WSrednie1(listphazconc[1].StepenPrinadl) +
@@ -374,7 +374,7 @@ namespace Диплом
             if (funcPrin == 2) return (WVisokie(listphazconc[2].StepenPrinadl) + 1) / 2;
             return 0;
         }
-        public float DePhazConcMct(List<PhazConcentration> listphazconc)
+        public double DePhazConcMct(List<PhazConcentration> listphazconc)
         {
             var znamenat = SimpsonX(0, 20, listphazconc[0].StepenPrinadl, listphazconc[1].StepenPrinadl,
                                         listphazconc[2].StepenPrinadl);
@@ -382,7 +382,7 @@ namespace Диплом
                                        listphazconc[2].StepenPrinadl)/znamenat;
         }
         //правило нечеткого автомата
-        public List<PhazConcentration> RuleDifWindNl(int i, int j)
+        public List<PhazConcentration> RuleDifWindNl(int i, int j)//void
         {
             var sumW = W1 + W2 + W3 + W4 + W6 + W7 + W8 + W9;
             var nizkie = (Cij[i - 1].Lj[j - 1].ConcNl.PhazConc[0].StepenPrinadl*W1 +
@@ -441,26 +441,26 @@ namespace Диплом
 
                 CellSize = Convert.ToDouble(_properties.textBox18.Text);
 
-                C = (float)Convert.ToDouble(_properties.textBox3.Text);
+                C = (double)Convert.ToDouble(_properties.textBox3.Text);
 
                 pictureBox1.Image = new Bitmap(Image.FromFile(_properties.label17.Text), pictureBox1.Width,
                                                   pictureBox1.Height);
 
-                U = ( float )Convert.ToDouble( _properties.textBox17.Text );
+                U = Convert.ToDouble( _properties.textBox17.Text );
 
-                W1 = ( float )Convert.ToDouble( _properties.textBox6.Text );
-                W2 = ( float )Convert.ToDouble( _properties.textBox7.Text );
-                W3 = ( float )Convert.ToDouble( _properties.textBox8.Text );
-                W4 = ( float )Convert.ToDouble( _properties.textBox9.Text );
-                W5 = ( float )Convert.ToDouble( _properties.textBox10.Text );
-                W6 = ( float )Convert.ToDouble( _properties.textBox11.Text );
-                W7 = ( float )Convert.ToDouble( _properties.textBox12.Text );
-                W8 = ( float )Convert.ToDouble( _properties.textBox13.Text );
-                W9 = ( float )Convert.ToDouble( _properties.textBox14.Text );
+                W1 = Convert.ToDouble( _properties.textBox6.Text );
+                W2 = Convert.ToDouble( _properties.textBox7.Text );
+                W3 = Convert.ToDouble( _properties.textBox8.Text );
+                W4 = Convert.ToDouble( _properties.textBox9.Text );
+                W5 = Convert.ToDouble( _properties.textBox10.Text );
+                W6 = Convert.ToDouble( _properties.textBox11.Text );
+                W7 = Convert.ToDouble( _properties.textBox12.Text );
+                W8 = Convert.ToDouble( _properties.textBox13.Text );
+                W9 = Convert.ToDouble( _properties.textBox14.Text );
 
                 //Поправка коэффициента разбавления за счет скорости ветра
-                Gamma = ( float )Convert.ToDouble( _properties.textBox4.Text ) * ( ( float )1.001111 - ( float )0.002222 * U );
-                Phi = ( float )Convert.ToDouble( _properties.textBox19.Text );
+                Gamma = Convert.ToDouble( _properties.textBox4.Text ) * ( 1.001111 - 0.002222 * U );
+                Phi = Convert.ToDouble( _properties.textBox19.Text );
 
                 //Delta = Convert.ToDecimal(_properties.textBox5.Text);
                 _round = Convert.ToInt32(_properties.textBox15.Text);
@@ -510,27 +510,31 @@ namespace Диплом
                     sw.Start();
                     pictureBox1.Image = bmp;
                     Gr = Graphics.FromImage(pictureBox1.Image);
-                    float sumc = 0;
-                    float sumcnew = 0;
-
+                    double sumc = 0;
+                    double sumcnew = 0;
+                    
                     //фазификация
                     //Parallel.For(0, N, (i, loopState) =>
                     /// -------------------------------------------------------
                     Parallel.For( 0, N, ops, (i, loopState) =>
        //             for (var i = 0; i < N; i++)
                     {
+                        double conc;
                         for (var j = 0; j < N; j++)
                         {
-                            if (Cij[i].Lj[j].ConcNl.Conc == 0)
+                            conc = (double)Cij[ i ].Lj[ j ].ConcNl.Conc;
+                            if (conc == 0)
                             {
                                 Cij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl = 1;
                                 Cij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl = 0;
                                 Cij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl = 0;
                             }
                             else
-                            {
-                                Cij[i].Lj[j].ConcNl.PhazConc = PhazConc(Cij[i].Lj[j].ConcNl.Conc);
-                                sumc += Cij[i].Lj[j].ConcNl.Conc;
+                            {                               
+                                Cij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl = WNizkieX(conc);
+                                Cij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl = WSrednieX(conc);
+                                Cij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl = WVisokieX(conc);
+                                sumc += conc;
                             }
                         }
                     });
@@ -541,7 +545,7 @@ namespace Диплом
                    // for (var i = 1; i < N - 1; i++)
                         for (var j = 1; j < N - 1; j++)
                         {
-                            NewCij[i].Lj[j].ConcNl.PhazConc = RuleDifWindNl(i, j);
+                            NewCij[i].Lj[j].ConcNl.PhazConc = RuleDifWindNl(i, j);//lll
                         }
                     });
 
@@ -563,7 +567,7 @@ namespace Диплом
                                     NewCij[i].Lj[j].ConcNl.PhazConc.FindIndex(
                                         x => x.StepenPrinadl == NewCij[i].Lj[j].ConcNl.PhazConc.Max(z => z.StepenPrinadl));
                                 NewCij[i].Lj[j].ConcNl.DePhazConc = NewCij[i].Lj[j].ConcNl.PhazConc[i1].StepenPrinadl >=
-                                                                   (float)0.8
+                                                                   (double)0.8
                                                                        ? DePhazConcSrMax(
                                                                            NewCij[i].Lj[j].ConcNl.PhazConc, i1)
                                                                        : DePhazConcMct(NewCij[i].Lj[j].ConcNl.PhazConc);
@@ -592,6 +596,7 @@ namespace Диплом
                             }
                             else
                             {
+                                //Копирование в старый массив:
                                 Cij[i].Lj[j].ConcNl.Conc = sumcnew != 0
                                                               ? Round(NewCij[i].Lj[j].ConcNl.Conc * sumc / sumcnew, _round)
                                                               : 0;
@@ -637,30 +642,30 @@ namespace Диплом
                     _maxConcentationForFunc = _maxConcentationForPaint * 2;
                     label2.Text = Round(GetSum(), _round).ToString();
                     _steps++;
-                    _time += Round((float)0.5 / U /4, 2);//коэффициент 4 учитывает положение облака через час при 1 метре в сек
+                    _time += Round((double)0.5 / U /4, 2);//коэффициент 4 учитывает положение облака через час при 1 метре в сек
                     label5.Text = _time.ToString();
                     //сценарий
-                    if ( _properties.checkBox1.Checked && _time >= ( float )Convert.ToDouble( _properties.dataGridView1.Rows[ _scenariyK ].Cells[ 0 ].Value ) && 
+                    if ( _properties.checkBox1.Checked && _time >= Convert.ToDouble( _properties.dataGridView1.Rows[ _scenariyK ].Cells[ 0 ].Value ) && 
                         _scenariyK < _properties.dataGridView1.RowCount - 1)
                     {
-                        U = ( float )Convert.ToDouble( _properties.dataGridView1.Rows[ _scenariyK ].Cells[ 2 ].Value );
+                        U = Convert.ToDouble( _properties.dataGridView1.Rows[ _scenariyK ].Cells[ 2 ].Value );
 
                         var omega = Convert.ToInt32(_properties.dataGridView1.Rows[_scenariyK].Cells[1].Value);
                         var listW = _properties.GetW(U, omega);
 
-                        W1 = ( float )Convert.ToDouble( listW[ 0 ].W );
-                        W2 = ( float )Convert.ToDouble( listW[ 1 ].W );
-                        W3 = ( float )Convert.ToDouble( listW[ 2 ].W );
-                        W4 = ( float )Convert.ToDouble( listW[ 3 ].W );
-                        W5 = ( float )Convert.ToDouble( listW[ 4 ].W );
-                        W6 = ( float )Convert.ToDouble( listW[ 5 ].W );
-                        W7 = ( float )Convert.ToDouble( listW[ 6 ].W );
-                        W8 = ( float )Convert.ToDouble( listW[ 7 ].W );
-                        W9 = ( float )Convert.ToDouble( listW[ 8 ].W );
+                        W1 = Convert.ToDouble( listW[ 0 ].W );
+                        W2 = Convert.ToDouble( listW[ 1 ].W );
+                        W3 = Convert.ToDouble( listW[ 2 ].W );
+                        W4 = Convert.ToDouble( listW[ 3 ].W );
+                        W5 = Convert.ToDouble( listW[ 4 ].W );
+                        W6 = Convert.ToDouble( listW[ 5 ].W );
+                        W7 = Convert.ToDouble( listW[ 6 ].W );
+                        W8 = Convert.ToDouble( listW[ 7 ].W );
+                        W9 = Convert.ToDouble( listW[ 8 ].W );
 
                         //Поправка коэффициента разбавления за счет скорости ветра
-                        Gamma = ( float )Convert.ToDouble( _properties.textBox4.Text ) *
-                                ((float) 1.001111 - (float) 0.002222*U);
+                        Gamma = Convert.ToDouble( _properties.textBox4.Text ) *
+                                ((double) 1.001111 - (double) 0.002222*U);
 
                         _scenariyK++;
                     }
@@ -724,8 +729,8 @@ namespace Диплом
                 ProfileConc = new ПрофилиКонцентраций();
                 ProfileConc.chart1.Series[0].Points.Clear();
                 ProfileConc.chart1.Series[1].Points.Clear();
-                var maxX=new List<float>();
-                var maxY = new List<float>();
+                var maxX=new List<double>();
+                var maxY = new List<double>();
                 for (var i = 0; i < N; i++)
                 {
                     if (Cij[e.Y].Lj[i].ConcNl.Conc > 0)
@@ -754,7 +759,7 @@ namespace Диплом
                         ProfileConc.chart3.Series[0].Points.Add(new DataPoint(v.XValue, v.YValues[0] * 47208));
                     }
                     var i1 = Cij[e.Y].Lj[e.X].AlConcentration.FindIndex(x => x.YValues[0] == Cij[e.Y].Lj[e.X].AlConcentration.Max(z => z.YValues[0]));
-                    ProfileConc.label7.Text += " X = " + e.X * CellSize + " Y = " + e.Y * CellSize + " : C = " + Round( ( float )Convert.ToDouble( Cij[ e.Y ].Lj[ e.X ].AlConcentration[ i1 ].YValues[ 0 ] * 47208 ), 2 ) + " мг/м3" + " в момент времени Т = " + Round( ( float )Convert.ToDouble( Cij[ e.Y ].Lj[ e.X ].AlConcentration[ i1 ].XValue ), 2 ) + " мин";
+                    ProfileConc.label7.Text += " X = " + e.X * CellSize + " Y = " + e.Y * CellSize + " : C = " + Round( Convert.ToDouble( Cij[ e.Y ].Lj[ e.X ].AlConcentration[ i1 ].YValues[ 0 ] * 47208 ), 2 ) + " мг/м3" + " в момент времени Т = " + Round( Convert.ToDouble( Cij[ e.Y ].Lj[ e.X ].AlConcentration[ i1 ].XValue ), 2 ) + " мин";
                 }
                 ProfileConc.ShowDialog();
             }

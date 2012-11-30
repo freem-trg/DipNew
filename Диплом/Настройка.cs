@@ -17,12 +17,12 @@ namespace Диплом
 
         public class PhazCoeffW
         {
-            public PhazCoeffW(float membershipValue1, string fazzySetName1)
+            public PhazCoeffW(double membershipValue1, string fazzySetName1)
             {
                 MembershipValue = membershipValue1;
                 FazzySetName = fazzySetName1;
             }
-            public float MembershipValue;
+            public double MembershipValue;
             public string FazzySetName;
         }
         public class WNl
@@ -31,63 +31,63 @@ namespace Диплом
             {
                 PhazWw1 = phazW1;
             }
-            public float DePhazW;
+            public double DePhazW;
             public List<PhazCoeffW> PhazWw1;
-            public float W;
+            public double W;
         }
-        public float Round(float valueToRound, int count)
+        public double Round(double valueToRound, int count)
         {
-            var d = (float)Math.Pow(10, count);
+            var d = (double)Math.Pow(10, count);
             valueToRound = valueToRound * d;
             var celValue = Math.Truncate(valueToRound);
-            return (valueToRound - celValue) >= (float).5 ? (float)(Math.Ceiling(valueToRound) / d) : (float)(celValue / d);
+            return (valueToRound - celValue) >= 0.5 ? Math.Ceiling(valueToRound) / d : celValue / d;
         }
         //функции принадлежн угла
-        public float AlphaMaliyX(float x)
+        public double AlphaMaliyX(double x)
         {
             return x >= 60 ? 0 : 1 - x / 60;
         }
-        public float AlphaSredniyX(float x)
+        public double AlphaSredniyX(double x)
         {
-            return x >= 135 ? 0 : (x <= 60 ? x / 60 : (float)1.8 - x / 75);
+            return x >= 135 ? 0 : (x <= 60 ? x / 60 : 1.8 - x / 75);
         }
-        public float AlphaBolshoyX(float x)
+        public double AlphaBolshoyX(double x)
         {
-            return x <= 60 ? 0 : (x > 60 && x <= 135 ? x / 75 - (float)0.8 : 1);
+            return x <= 60 ? 0 : (x > 60 && x <= 135 ? x / 75 - 0.8 : 1);
         }
         //средние максимумы
-        public float WMaliy(float m)
+        public double WMaliy(double m)
         {
-            return (float)0.5 - m * (float)0.5;
+            return 0.5 - m * 0.5;
         }
-        public float WSredniy1(float m)
+        public double WSredniy1(double m)
         {
-            return m * (float)0.25 + (float)0.25;
+            return m * 0.25 + 0.25;
         }
-        public float WSredniy2(float m)
+        public double WSredniy2(double m)
         {
-            return (float)0.75 - m * (float)0.25;
+            return 0.75 - m * 0.25;
         }
-        public float WBolshoy(float m)
+        public double WBolshoy(double m)
         {
-            return m * (float)0.5 + (float)0.5;
+            return m * 0.5 + 0.5;
         }
         //МЦТ
-        public float WMaliyX(float x)
+        public double WMaliyX(double x)
         {
-            return x >= (float)0.4 ? 0 : 1 - x * (float)2.5;
+            return x >= 0.4 ? 0 : 1 - x * 2.5;
         }
-        public float WSredniyX(float x)
+        public double WSredniyX(double x)
         {
-            return x <= (float)0.2 || x >= (float)0.6 ? 0 :
-                (x > (float)0.2 && x <= (float)0.4 ? x * 5 - 1 : 3 - x * 5);
+            return x <= 0.2 || x >= 0.6 ? 0 :
+                (x > 0.2 && x <= 0.4 ? x * 5 - 1 : 3 - x * 5);
         }
-        public float WBolshoyX(float x)
+        public double WBolshoyX(double x)
         {
-            return x < (float)0.4 ? 0 : x * (float)2.55 - 1;
+            return x < 0.4 ? 0 : x * 2.55 - 1;
         }
         //phazification
-        public List<PhazCoeffW> PhazW(float alpha)
+        public List<PhazCoeffW> PhazW(double alpha)
         {
             return new List<PhazCoeffW>
                            {
@@ -97,17 +97,17 @@ namespace Диплом
                            };
         }
         //dephazification
-        public float MItogW(float x, float m1, float m2, float m3)
+        public double MItogW(double x, double m1, double m2, double m3)
         {
-            var listM = new List<float> { Math.Min(WMaliyX(x), m1), Math.Min(WSredniyX(x), m2), Math.Min(WBolshoyX(x), m3) };
+            var listM = new List<double> { Math.Min(WMaliyX(x), m1), Math.Min(WSredniyX(x), m2), Math.Min(WBolshoyX(x), m3) };
             return listM.Max(y => y);
         }
-        public float SimpsonXw(float a, float b, float m1, float m2, float m3)
+        public double SimpsonXw(double a, double b, double m1, double m2, double m3)
         {
-            const float delta = (float)0.01;
-            float fxi = 0;
-            float fxi1 = 0;
-            float fxixi1 = 0;
+            const double delta = (double)0.01;
+            double fxi = 0;
+            double fxi1 = 0;
+            double fxixi1 = 0;
             var xi = a;
             var xi1 = a + delta;
             while (xi1 <= b)
@@ -120,12 +120,12 @@ namespace Диплом
             }
             return delta / 6 * (fxi + fxi1 + 4 * fxixi1);
         }
-        public float SimpsonXxW(float a, float b, float m1, float m2, float m3)
+        public double SimpsonXxW(double a, double b, double m1, double m2, double m3)
         {
-            const float delta = (float)0.001;
-            float fxi = 0;
-            float fxi1 = 0;
-            float fxixi1 = 0;
+            const double delta = 0.001;
+            double fxi = 0;
+            double fxi1 = 0;
+            double fxixi1 = 0;
             var xi = a;
             var xi1 = a + delta;
             while (xi1 <= b)
@@ -138,7 +138,7 @@ namespace Диплом
             }
             return delta / 6 * (fxi + fxi1 + 4 * fxixi1);
         }
-        public float DePhazWSrMax(WNl ls, int funcPrin)
+        public double DePhazWSrMax(WNl ls, int funcPrin)
         {
             if (funcPrin == 0)
             {
@@ -154,7 +154,7 @@ namespace Диплом
             }
             return 0;
         }
-        public float DePhazWMct(WNl ls)
+        public double DePhazWMct(WNl ls)
         {
             var znam = SimpsonXw(0, 1, ls.PhazWw1[0].MembershipValue, ls.PhazWw1[1].MembershipValue,
                                        ls.PhazWw1[2].MembershipValue);
@@ -163,16 +163,16 @@ namespace Диплом
                                       ls.PhazWw1[2].MembershipValue)/znam;
         }
         //поправка на ветер
-        public float GetK(float alpha, float u)
+        public double GetK(double alpha, double u)
         {
             if (alpha >= 120)
             {
                 return 0;
             }
-            var k = (float)2.145 - (float)2.81 * alpha + (float)1.05 * u + (float)0.946 * alpha * alpha - (float)0.079 * u * u - (float)0.444 * alpha * u;
+            var k = 2.145 - 2.81 * alpha + 1.05 * u + 0.946 * alpha * alpha - 0.079 * u * u - 0.444 * alpha * u;
             return k < 0 ? 0 : k;
         }
-        public float GetAlpha(int gamma, int omega)
+        public double GetAlpha(int gamma, int omega)
         {
             var alpha1 = Math.Abs(omega - gamma);
             return alpha1 > 180 ? 360 - alpha1 : alpha1;
@@ -237,10 +237,10 @@ namespace Диплом
         }
         private void trackBar2_Scroll(object sender, EventArgs e)
         {
-            textBox17.Text = (trackBar2.Value / (float)10).ToString();
+            textBox17.Text = (trackBar2.Value / 10).ToString();
         }
         //
-        public List<WNl> GetW(float u, int omega)
+        public List<WNl> GetW(double u, int omega)
         {
             var listW = new List<WNl>();
             //фазификация
@@ -266,18 +266,18 @@ namespace Диплом
             foreach (var ls in listW)
             {
                 var i = ls.PhazWw1.FindIndex(x => x.MembershipValue == ls.PhazWw1.Max(z => z.MembershipValue));
-                ls.DePhazW = ls.PhazWw1[i].MembershipValue >= (float)0.8 ? DePhazWSrMax(ls, i) : DePhazWMct(ls);
+                ls.DePhazW = ls.PhazWw1[i].MembershipValue >= 0.8 ? DePhazWSrMax(ls, i) : DePhazWMct(ls);
             }
 
-            listW[0].W = Round(listW[0].DePhazW * GetK(al1 / 180 * (float)Math.PI, u), 2);
-            listW[1].W = Round(listW[1].DePhazW * GetK(al2 / 180 * (float)Math.PI, u), 2);
-            listW[2].W = Round(listW[2].DePhazW * GetK(al3 / 180 * (float)Math.PI, u), 2);
-            listW[3].W = Round(listW[3].DePhazW * GetK(al4 / 180 * (float)Math.PI, u), 2);
+            listW[0].W = Round(listW[0].DePhazW * GetK(al1 / 180 * (double)Math.PI, u), 2);
+            listW[1].W = Round(listW[1].DePhazW * GetK(al2 / 180 * (double)Math.PI, u), 2);
+            listW[2].W = Round(listW[2].DePhazW * GetK(al3 / 180 * (double)Math.PI, u), 2);
+            listW[3].W = Round(listW[3].DePhazW * GetK(al4 / 180 * (double)Math.PI, u), 2);
 
-            listW[5].W = Round(listW[5].DePhazW * GetK(al6 / 180 * (float)Math.PI, u), 2);
-            listW[6].W = Round(listW[6].DePhazW * GetK(al7 / 180 * (float)Math.PI, u), 2);
-            listW[7].W = Round(listW[7].DePhazW * GetK(al8 / 180 * (float)Math.PI, u), 2);
-            listW[8].W = Round(listW[8].DePhazW * GetK(al9 / 180 * (float)Math.PI, u), 2);
+            listW[5].W = Round(listW[5].DePhazW * GetK(al6 / 180 * (double)Math.PI, u), 2);
+            listW[6].W = Round(listW[6].DePhazW * GetK(al7 / 180 * (double)Math.PI, u), 2);
+            listW[7].W = Round(listW[7].DePhazW * GetK(al8 / 180 * (double)Math.PI, u), 2);
+            listW[8].W = Round(listW[8].DePhazW * GetK(al9 / 180 * (double)Math.PI, u), 2);
 
             listW[4].W = listW.Max(x => x.W);
             return listW;
@@ -287,7 +287,7 @@ namespace Диплом
             if (textBox16.Text.CompareTo("") == 0) return;
             if (textBox17.Text.CompareTo("") == 0) return;
 
-            var u = ( float )Convert.ToDouble( textBox17.Text );
+            var u = Convert.ToDouble( textBox17.Text );
             var omega = Convert.ToInt32(textBox16.Text);
             var listW =  GetW(u, omega);
             textBox6.Text = listW[0].W.ToString();
@@ -356,7 +356,7 @@ namespace Диплом
         {
             try
             {
-                textBox18.Text = Round( ( float )Convert.ToDouble( textBox2.Text ) / ( float )Convert.ToDouble( textBox1.Text ), 3 ).ToString();
+                textBox18.Text = Round( Convert.ToDouble( textBox2.Text ) / Convert.ToDouble( textBox1.Text ), 3 ).ToString();
             }
             catch (Exception)
             {
