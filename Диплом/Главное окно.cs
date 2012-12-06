@@ -107,16 +107,26 @@ namespace Диплом
                 {
                     Cij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
                                             {
-                                                new PhazConcentration(0, "Nizkie"),
-                                                new PhazConcentration(0, "sred"),
-                                                new PhazConcentration(0, "Visok")
+                                                //By FREEM:
+                                                //И тут сносим:
+                                                //new PhazConcentration(0, "Nizkie"),
+                                                //new PhazConcentration(0, "sred"),
+                                                //new PhazConcentration(0, "Visok")
+                                                new PhazConcentration(0),
+                                                new PhazConcentration(0),
+                                                new PhazConcentration(0)
                                             }
                                    )));
                    NewCij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
                                             {
-                                                new PhazConcentration(0, "Nizkie"),
-                                                new PhazConcentration(0, "sred"),
-                                                new PhazConcentration(0, "Visok")
+                                                //By FREEM:
+                                                //ну и тут:
+                                                //new PhazConcentration(0, "Nizkie"),
+                                                //new PhazConcentration(0, "sred"),
+                                                //new PhazConcentration(0, "Visok")
+                                                new PhazConcentration(0),
+                                                new PhazConcentration(0),
+                                                new PhazConcentration(0)
                                             }
                                    )));
                 }
@@ -256,14 +266,18 @@ namespace Диплом
         //Нечеткая логика
         public class PhazConcentration
         {
-            public PhazConcentration(double stepenPrinadl1, string s1)
+            //By FREEM:
+            //Сносим стринги, т.к. хранить кучу одинаковых стрингов не нужно
+            //public PhazConcentration(double stepenPrinadl1, string s1)
+            public PhazConcentration(double stepenPrinadl1)
             {
                 StepenPrinadl = stepenPrinadl1;
-                NameFuncPrinadl = s1;
+                //NameFuncPrinadl = s1;
             }
             public double StepenPrinadl;
-            public string NameFuncPrinadl;
+            //public string NameFuncPrinadl;
         }
+
         public class ConcentrationNl
         {
             public ConcentrationNl(List<PhazConcentration> phazConc1)
@@ -319,9 +333,14 @@ namespace Диплом
         {
             return new List<PhazConcentration>
                            {
-                               new PhazConcentration(WNizkieX(conc), "Nizkie"),
-                               new PhazConcentration(WSrednieX(conc), "sred"),
-                               new PhazConcentration(WVisokieX(conc), "Visok")
+                               //By FREEM:
+                               //Тут тоже сносим лишние стринги:
+                               //new PhazConcentration(WNizkieX(conc), "Nizkie"),
+                               //new PhazConcentration(WSrednieX(conc), "sred"),
+                               //new PhazConcentration(WVisokieX(conc), "Visok")
+                               new PhazConcentration(WNizkieX(conc)),
+                               new PhazConcentration(WSrednieX(conc)),
+                               new PhazConcentration(WVisokieX(conc))
                            };
         }
         //дефазификация
@@ -411,9 +430,14 @@ namespace Диплом
                          Cij[i + 1].Lj[j + 1].ConcNl.PhazConc[2].StepenPrinadl * W9) / sumW;
             return new List<PhazConcentration>
                        {
-                           new PhazConcentration(nizkie, "Nizkie"),
-                           new PhazConcentration(srednie, "sred"),
-                           new PhazConcentration(visokie, "Visok")
+                           //By FREEM:
+                           //Тут тоже сносим лишние стринги:
+                           //new PhazConcentration(nizkie, "Nizkie"),
+                           //new PhazConcentration(srednie, "sred"),
+                           //new PhazConcentration(visokie, "Visok")   
+                           new PhazConcentration(nizkie),
+                           new PhazConcentration(srednie),
+                           new PhazConcentration(visokie)
                        };
         }
         //Properties
