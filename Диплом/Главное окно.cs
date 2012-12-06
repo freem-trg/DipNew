@@ -27,8 +27,13 @@ namespace Диплом
             _time = 0;
         }
 
-        public List<Lsi> Cij;
-        public List<Lsi> NewCij;
+
+        //By FREEM:
+        //Избавимся и от этих листов:
+        //public List<Lsi> Cij;
+        //public List<Lsi> NewCij;
+        public Lsi[] Cij;
+        public Lsi[] NewCij;
 
         public double C;
         public double Gamma;
@@ -74,12 +79,13 @@ namespace Диплом
 
         public class Lsi
         {
-            public Lsi(IEnumerable<Lsj> l1)
+            public Lsi(Lsj[] l1)
             {
-                Lj = new List<Lsj>(l1);
+                Lj = l1;
             }
-            public List<Lsj> Lj;
+            public Lsj[] Lj;
         }
+
         public class Lsj
         {
             public Lsj(ConcentrationNl dConcNl1)
@@ -97,17 +103,18 @@ namespace Диплом
         //функции
         private void SetListZero()
         {
-            Cij = new List<Lsi>();
-            NewCij = new List<Lsi>();
+            Cij     = new Lsi[N];
+            NewCij  = new Lsi[N];
+
             for (var i = 0; i < N; i++)
             {
-                Cij.Add(new Lsi(new List<Lsj>()));
-                NewCij.Add(new Lsi(new List<Lsj>()));
+                Cij[ i ]    = new Lsi( new Lsj[ N ] );
+                NewCij[ i ] = new Lsi( new Lsj[ N ] );
                 for (var j = 0; j < N; j++)
                 {
                     //By FREEM:
                     //В связи со сменой листа -> массив меняем вызов конструктора:
-                    Cij[ i ].Lj.Add( new Lsj( new ConcentrationNl(new double[3]{ 0, 0, 0 } ) ) );
+                    Cij[ i ].Lj[j] = new Lsj( new ConcentrationNl(new double[3]{ 0, 0, 0 } ) );
                     //Cij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
                     //                        {
                     //                            //By FREEM:
@@ -122,7 +129,7 @@ namespace Диплом
                     //               )));
                     //By FREEM:
                     //В связи со сменой листа -> массив меняем вызов конструктора:
-                    NewCij[ i ].Lj.Add( new Lsj( new ConcentrationNl( new double[ 3 ] { 0, 0, 0 } ) ) );
+                    NewCij[ i ].Lj[ j ] = new Lsj( new ConcentrationNl( new double[ 3 ] { 0, 0, 0 } ) );
                     //NewCij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
                     //                        {
                     //                            //By FREEM:
