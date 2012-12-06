@@ -105,30 +105,36 @@ namespace Диплом
                 NewCij.Add(new Lsi(new List<Lsj>()));
                 for (var j = 0; j < N; j++)
                 {
-                    Cij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
-                                            {
-                                                //By FREEM:
-                                                //И тут сносим:
-                                                //new PhazConcentration(0, "Nizkie"),
-                                                //new PhazConcentration(0, "sred"),
-                                                //new PhazConcentration(0, "Visok")
-                                                new PhazConcentration(0),
-                                                new PhazConcentration(0),
-                                                new PhazConcentration(0)
-                                            }
-                                   )));
-                   NewCij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
-                                            {
-                                                //By FREEM:
-                                                //ну и тут:
-                                                //new PhazConcentration(0, "Nizkie"),
-                                                //new PhazConcentration(0, "sred"),
-                                                //new PhazConcentration(0, "Visok")
-                                                new PhazConcentration(0),
-                                                new PhazConcentration(0),
-                                                new PhazConcentration(0)
-                                            }
-                                   )));
+                    //By FREEM:
+                    //В связи со сменой листа -> массив меняем вызов конструктора:
+                    Cij[ i ].Lj.Add( new Lsj( new ConcentrationNl(new double[3]{ 0, 0, 0 } ) ) );
+                    //Cij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
+                    //                        {
+                    //                            //By FREEM:
+                    //                            //И тут сносим:
+                    //                            //new PhazConcentration(0, "Nizkie"),
+                    //                            //new PhazConcentration(0, "sred"),
+                    //                            //new PhazConcentration(0, "Visok")
+                    //                            new PhazConcentration(0),
+                    //                            new PhazConcentration(0),
+                    //                            new PhazConcentration(0)
+                    //                        }
+                    //               )));
+                    //By FREEM:
+                    //В связи со сменой листа -> массив меняем вызов конструктора:
+                    NewCij[ i ].Lj.Add( new Lsj( new ConcentrationNl( new double[ 3 ] { 0, 0, 0 } ) ) );
+                    //NewCij[i].Lj.Add(new Lsj(new ConcentrationNl(new List<PhazConcentration>
+                    //                        {
+                    //                            //By FREEM:
+                    //                            //ну и тут:
+                    //                            //new PhazConcentration(0, "Nizkie"),
+                    //                            //new PhazConcentration(0, "sred"),
+                    //                            //new PhazConcentration(0, "Visok")
+                    //                            new PhazConcentration(0),
+                    //                            new PhazConcentration(0),
+                    //                            new PhazConcentration(0)
+                    //                        }
+                    //               )));
                 }
             }
         }
@@ -280,13 +286,17 @@ namespace Диплом
 
         public class ConcentrationNl
         {
-            public ConcentrationNl(List<PhazConcentration> phazConc1)
+            //By FREEM:
+            //Замена листа обычным массивом:            
+            //public ConcentrationNl(List<PhazConcentration> phazConc1)
+            public ConcentrationNl(double[] phazConc1)
             {
                 PhazConc = phazConc1;
             }
             public double Conc;
             public double DePhazConc;
-            public List<PhazConcentration> PhazConc;
+            //public List<PhazConcentration> PhazConc;
+            public double[] PhazConc;
         }
         //средние максимумы
         public double WNizkie(double m)
@@ -328,21 +338,27 @@ namespace Диплом
             var p = _maxConcentationForFunc / 2;
             return x <= p ? 0 : (x >= _maxConcentationForFunc ? 1 : x / p - 1);
         }
+
         //фазификация
-        public List<PhazConcentration> PhazConc(double conc)
-        {
-            return new List<PhazConcentration>
-                           {
-                               //By FREEM:
-                               //Тут тоже сносим лишние стринги:
-                               //new PhazConcentration(WNizkieX(conc), "Nizkie"),
-                               //new PhazConcentration(WSrednieX(conc), "sred"),
-                               //new PhazConcentration(WVisokieX(conc), "Visok")
-                               new PhazConcentration(WNizkieX(conc)),
-                               new PhazConcentration(WSrednieX(conc)),
-                               new PhazConcentration(WVisokieX(conc))
-                           };
+        //public List<PhazConcentration> PhazConc(double conc)
+        //{
+        //    return new List<PhazConcentration>
+        //                   {
+        //                       //By FREEM:
+        //                       //Тут тоже сносим лишние стринги:
+        //                       //new PhazConcentration(WNizkieX(conc), "Nizkie"),
+        //                       //new PhazConcentration(WSrednieX(conc), "sred"),
+        //                       //new PhazConcentration(WVisokieX(conc), "Visok")
+        //                       new PhazConcentration(WNizkieX(conc)),
+        //                       new PhazConcentration(WSrednieX(conc)),
+        //                       new PhazConcentration(WVisokieX(conc))
+        //                   };
+        //}
+
+        public double[] PhazConc( double conc ) {
+            return new double[ 3 ] { WNizkieX( conc ), WSrednieX( conc ), WVisokieX( conc ) };
         }
+
         //дефазификация
         public double MItog(double x, double m1, double m2, double m3)
         {
@@ -385,60 +401,100 @@ namespace Диплом
             }
             return delta / 6 * (fxi + fxi1 + 4 * fxixi1);
         }
-        public double DePhazConcSrMax(List<PhazConcentration> listphazconc, int funcPrin)
+
+        //By FREEM:
+        //Меняем конструктор тк List -> double[3]
+        //public double DePhazConcSrMax(List<PhazConcentration> listphazconc, int funcPrin)
+        public double DePhazConcSrMax( double[] listphazconc, int funcPrin )
         {
-            if (funcPrin == 0)  return (0 + WNizkie(listphazconc[0].StepenPrinadl))/2;
-            if (funcPrin == 1) return (WSrednie1(listphazconc[1].StepenPrinadl) +
-                                         WSrednie2(listphazconc[1].StepenPrinadl)) / 2;
-            if (funcPrin == 2) return (WVisokie(listphazconc[2].StepenPrinadl) + 1) / 2;
+            //By FREEM:
+            //В связи с переходом от листа объектов к массиву меняем обращение:
+            //if (funcPrin == 0)  return (0 + WNizkie(listphazconc[0].StepenPrinadl))/2;
+            //if (funcPrin == 1) return (WSrednie1(listphazconc[1].StepenPrinadl) +
+            //                             WSrednie2(listphazconc[1].StepenPrinadl)) / 2;
+            //if (funcPrin == 2) return (WVisokie(listphazconc[2].StepenPrinadl) + 1) / 2;
+            if ( funcPrin == 0 ) return ( 0 + WNizkie( listphazconc[ 0 ] ) ) / 2;
+            if ( funcPrin == 1 ) return ( WSrednie1( listphazconc[ 1 ] ) +
+                                           WSrednie2( listphazconc[ 1 ] ) ) / 2;
+            if ( funcPrin == 2 ) return ( WVisokie( listphazconc[ 2 ] ) + 1 ) / 2;
             return 0;
         }
-        public double DePhazConcMct(List<PhazConcentration> listphazconc)
+
+        //By FREEM:
+        //Меняем конструктор тк List -> double[3]
+        //public double DePhazConcMct(List<PhazConcentration> listphazconc)
+        public double DePhazConcMct( double[] listphazconc )
         {
-            var znamenat = SimpsonX(0, 20, listphazconc[0].StepenPrinadl, listphazconc[1].StepenPrinadl,
-                                        listphazconc[2].StepenPrinadl);
-            return znamenat == 0 ? 0 : SimpsonXx(0, 20, listphazconc[0].StepenPrinadl, listphazconc[1].StepenPrinadl,
-                                       listphazconc[2].StepenPrinadl)/znamenat;
+            var znamenat = SimpsonX( 0, 20, listphazconc[0], listphazconc[1], listphazconc[2] );
+            return znamenat == 0 ? 0 : SimpsonXx( 0, 20, listphazconc[0], listphazconc[1], listphazconc[2] )/znamenat;
         }
+
+
         //правило нечеткого автомата
-        public List<PhazConcentration> RuleDifWindNl(int i, int j)//void
+        //By FREEM меняем шапку:
+        //public List<PhazConcentration> RuleDifWindNl(int i, int j)//void
+        public double[] RuleDifWindNl( int i, int j )//void
         {
-            var sumW = W1 + W2 + W3 + W4 + W6 + W7 + W8 + W9;
-            var nizkie = (Cij[i - 1].Lj[j - 1].ConcNl.PhazConc[0].StepenPrinadl*W1 +
-                         Cij[i - 1].Lj[j].ConcNl.PhazConc[0].StepenPrinadl*W2 +
-                         Cij[i - 1].Lj[j + 1].ConcNl.PhazConc[0].StepenPrinadl*W3 +
-                         Cij[i].Lj[j - 1].ConcNl.PhazConc[0].StepenPrinadl*W4 +
-                         Cij[i].Lj[j + 1].ConcNl.PhazConc[0].StepenPrinadl*W6 +
-                         Cij[i + 1].Lj[j - 1].ConcNl.PhazConc[0].StepenPrinadl*W7 +
-                         Cij[i + 1].Lj[j].ConcNl.PhazConc[0].StepenPrinadl*W8 +
-                         Cij[i + 1].Lj[j + 1].ConcNl.PhazConc[0].StepenPrinadl*W9) / sumW;
-            var srednie = (Cij[i - 1].Lj[j - 1].ConcNl.PhazConc[1].StepenPrinadl * W1 +
-                         Cij[i - 1].Lj[j].ConcNl.PhazConc[1].StepenPrinadl * W2 +
-                         Cij[i - 1].Lj[j + 1].ConcNl.PhazConc[1].StepenPrinadl * W3 +
-                         Cij[i].Lj[j - 1].ConcNl.PhazConc[1].StepenPrinadl * W4 +
-                         Cij[i].Lj[j + 1].ConcNl.PhazConc[1].StepenPrinadl * W6 +
-                         Cij[i + 1].Lj[j - 1].ConcNl.PhazConc[1].StepenPrinadl * W7 +
-                         Cij[i + 1].Lj[j].ConcNl.PhazConc[1].StepenPrinadl * W8 +
-                         Cij[i + 1].Lj[j + 1].ConcNl.PhazConc[1].StepenPrinadl * W9) / sumW;
-            var visokie = (Cij[i - 1].Lj[j - 1].ConcNl.PhazConc[2].StepenPrinadl * W1 +
-                         Cij[i - 1].Lj[j].ConcNl.PhazConc[2].StepenPrinadl * W2 +
-                         Cij[i - 1].Lj[j + 1].ConcNl.PhazConc[2].StepenPrinadl * W3 +
-                         Cij[i].Lj[j - 1].ConcNl.PhazConc[2].StepenPrinadl * W4 +
-                         Cij[i].Lj[j + 1].ConcNl.PhazConc[2].StepenPrinadl * W6 +
-                         Cij[i + 1].Lj[j - 1].ConcNl.PhazConc[2].StepenPrinadl * W7 +
-                         Cij[i + 1].Lj[j].ConcNl.PhazConc[2].StepenPrinadl * W8 +
-                         Cij[i + 1].Lj[j + 1].ConcNl.PhazConc[2].StepenPrinadl * W9) / sumW;
-            return new List<PhazConcentration>
-                       {
-                           //By FREEM:
-                           //Тут тоже сносим лишние стринги:
-                           //new PhazConcentration(nizkie, "Nizkie"),
-                           //new PhazConcentration(srednie, "sred"),
-                           //new PhazConcentration(visokie, "Visok")   
-                           new PhazConcentration(nizkie),
-                           new PhazConcentration(srednie),
-                           new PhazConcentration(visokie)
-                       };
+            //сумма double'ов = double. Заменяем динамическое определеине типа:
+            //var sumW = W1 + W2 + W3 + W4 + W6 + W7 + W8 + W9;
+            double sumW = W1 + W2 + W3 + W4 + W6 + W7 + W8 + W9;
+            //By FREEM:
+            //Меняем тк List -> double[3]
+            //сумма double'ов = double. Заменяем динамическое определеине типа:
+            double nizkie = ( 
+                             Cij[ i - 1 ].Lj[ j - 1 ].ConcNl.PhazConc[ 0 ] * W1 + Cij[ i - 1 ].Lj[ j ].ConcNl.PhazConc[ 0 ] * W2 + Cij[ i - 1 ].Lj[ j + 1 ].ConcNl.PhazConc[ 0 ] * W3 +
+                             Cij[ i ].Lj[ j - 1 ].ConcNl.PhazConc[ 0 ] * W4 + Cij[ i ].Lj[ j + 1 ].ConcNl.PhazConc[ 0 ] * W6 + Cij[ i + 1 ].Lj[ j - 1 ].ConcNl.PhazConc[ 0 ] * W7 + 
+                             Cij[ i + 1 ].Lj[ j ].ConcNl.PhazConc[ 0 ] * W8 + Cij[ i + 1 ].Lj[ j + 1 ].ConcNl.PhazConc[ 0 ] * W9 
+                             ) / sumW;
+            double srednie = ( 
+                             Cij[ i - 1 ].Lj[ j - 1 ].ConcNl.PhazConc[ 1 ] * W1 + Cij[ i - 1 ].Lj[ j ].ConcNl.PhazConc[ 1 ] * W2 + Cij[ i - 1 ].Lj[ j + 1 ].ConcNl.PhazConc[ 1 ] * W3 +
+                             Cij[ i ].Lj[ j - 1 ].ConcNl.PhazConc[ 1 ] * W4 + Cij[ i ].Lj[ j + 1 ].ConcNl.PhazConc[ 1 ] * W6 + Cij[ i + 1 ].Lj[ j - 1 ].ConcNl.PhazConc[ 1 ] * W7 +
+                             Cij[ i + 1 ].Lj[ j ].ConcNl.PhazConc[ 1 ] * W8 + Cij[ i + 1 ].Lj[ j + 1 ].ConcNl.PhazConc[ 1 ] * W9 
+                             ) / sumW;
+            double visokie = ( 
+                             Cij[ i - 1 ].Lj[ j - 1 ].ConcNl.PhazConc[ 2 ] * W1 + Cij[ i - 1 ].Lj[ j ].ConcNl.PhazConc[ 2 ] * W2 + Cij[ i - 1 ].Lj[ j + 1 ].ConcNl.PhazConc[ 2 ] * W3 +
+                             Cij[ i ].Lj[ j - 1 ].ConcNl.PhazConc[ 2 ] * W4 + Cij[ i ].Lj[ j + 1 ].ConcNl.PhazConc[ 2 ] * W6 + Cij[ i + 1 ].Lj[ j - 1 ].ConcNl.PhazConc[ 2 ] * W7 +
+                             Cij[ i + 1 ].Lj[ j ].ConcNl.PhazConc[ 2 ] * W8 + Cij[ i + 1 ].Lj[ j + 1 ].ConcNl.PhazConc[ 2 ] * W9 
+                             ) / sumW;
+            //var nizkie = (Cij[i - 1].Lj[j - 1].ConcNl.PhazConc[0].StepenPrinadl*W1 +
+            //             Cij[i - 1].Lj[j].ConcNl.PhazConc[0].StepenPrinadl*W2 +
+            //             Cij[i - 1].Lj[j + 1].ConcNl.PhazConc[0].StepenPrinadl*W3 +
+            //             Cij[i].Lj[j - 1].ConcNl.PhazConc[0].StepenPrinadl*W4 +
+            //             Cij[i].Lj[j + 1].ConcNl.PhazConc[0].StepenPrinadl*W6 +
+            //             Cij[i + 1].Lj[j - 1].ConcNl.PhazConc[0].StepenPrinadl*W7 +
+            //             Cij[i + 1].Lj[j].ConcNl.PhazConc[0].StepenPrinadl*W8 +
+            //             Cij[i + 1].Lj[j + 1].ConcNl.PhazConc[0].StepenPrinadl*W9) / sumW;
+            //var srednie = (Cij[i - 1].Lj[j - 1].ConcNl.PhazConc[1].StepenPrinadl * W1 +
+            //             Cij[i - 1].Lj[j].ConcNl.PhazConc[1].StepenPrinadl * W2 +
+            //             Cij[i - 1].Lj[j + 1].ConcNl.PhazConc[1].StepenPrinadl * W3 +
+            //             Cij[i].Lj[j - 1].ConcNl.PhazConc[1].StepenPrinadl * W4 +
+            //             Cij[i].Lj[j + 1].ConcNl.PhazConc[1].StepenPrinadl * W6 +
+            //             Cij[i + 1].Lj[j - 1].ConcNl.PhazConc[1].StepenPrinadl * W7 +
+            //             Cij[i + 1].Lj[j].ConcNl.PhazConc[1].StepenPrinadl * W8 +
+            //             Cij[i + 1].Lj[j + 1].ConcNl.PhazConc[1].StepenPrinadl * W9) / sumW;
+            //var visokie = (Cij[i - 1].Lj[j - 1].ConcNl.PhazConc[2].StepenPrinadl * W1 +
+            //             Cij[i - 1].Lj[j].ConcNl.PhazConc[2].StepenPrinadl * W2 +
+            //             Cij[i - 1].Lj[j + 1].ConcNl.PhazConc[2].StepenPrinadl * W3 +
+            //             Cij[i].Lj[j - 1].ConcNl.PhazConc[2].StepenPrinadl * W4 +
+            //             Cij[i].Lj[j + 1].ConcNl.PhazConc[2].StepenPrinadl * W6 +
+            //             Cij[i + 1].Lj[j - 1].ConcNl.PhazConc[2].StepenPrinadl * W7 +
+            //             Cij[i + 1].Lj[j].ConcNl.PhazConc[2].StepenPrinadl * W8 +
+            //             Cij[i + 1].Lj[j + 1].ConcNl.PhazConc[2].StepenPrinadl * W9) / sumW;
+
+            //By FREEM:
+            //Т.к работаем с массивом - меняем return:
+            //return new List<PhazConcentration>
+            //           {
+            //               //By FREEM:
+            //               //Тут тоже сносим лишние стринги:
+            //               //new PhazConcentration(nizkie, "Nizkie"),
+            //               //new PhazConcentration(srednie, "sred"),
+            //               //new PhazConcentration(visokie, "Visok")   
+            //               new PhazConcentration(nizkie),
+            //               new PhazConcentration(srednie),
+            //               new PhazConcentration(visokie)
+            //           };
+            return new double[ 3 ] { nizkie, srednie, visokie };
         }
         //Properties
         private void button3_Click(object sender, EventArgs e)
@@ -540,24 +596,31 @@ namespace Диплом
                     //фазификация
                     //Parallel.For(0, N, (i, loopState) =>
                     /// -------------------------------------------------------
-                    Parallel.For( 0, N, ops, (i, loopState) =>
-       //             for (var i = 0; i < N; i++)
+                    Parallel.For( 0, N, ( i, loopState ) =>
                     {
                         double conc;
                         for (var j = 0; j < N; j++)
                         {
-                            conc = (double)Cij[ i ].Lj[ j ].ConcNl.Conc;
+                            conc = Cij[ i ].Lj[ j ].ConcNl.Conc;
                             if (conc == 0)
                             {
-                                Cij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl = 1;
-                                Cij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl = 0;
-                                Cij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl = 0;
+                                //By FREEM:
+                                //Cij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl = 1;
+                                //Cij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl = 0;
+                                //Cij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl = 0;
+                                Cij[ i ].Lj[ j ].ConcNl.PhazConc[ 0 ] = 1;
+                                Cij[ i ].Lj[ j ].ConcNl.PhazConc[ 1 ] = 0;
+                                Cij[ i ].Lj[ j ].ConcNl.PhazConc[ 2 ] = 0;
                             }
                             else
-                            {                               
-                                Cij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl = WNizkieX(conc);
-                                Cij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl = WSrednieX(conc);
-                                Cij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl = WVisokieX(conc);
+                            {          
+                                //By FREEM:
+                                //Cij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl = WNizkieX(conc);
+                                //Cij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl = WSrednieX(conc);
+                                //Cij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl = WVisokieX(conc);
+                                Cij[ i ].Lj[ j ].ConcNl.PhazConc[ 0 ] = WNizkieX( conc );
+                                Cij[ i ].Lj[ j ].ConcNl.PhazConc[ 1 ] = WSrednieX( conc );
+                                Cij[ i ].Lj[ j ].ConcNl.PhazConc[ 2 ] = WVisokieX( conc );
                                 sumc += conc;
                             }
                         }
@@ -579,22 +642,44 @@ namespace Диплом
                     {
                         for (var j = 1; j < N - 1; j++)
                         {
-                            if (NewCij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl == 1 &&
-                                NewCij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl == 0 &&
-                                NewCij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl == 0)
-                            {
-                                NewCij[i].Lj[j].ConcNl.DePhazConc = 0;
-                            }
-                            else
-                            {
-                                var i1 =
-                                    NewCij[i].Lj[j].ConcNl.PhazConc.FindIndex(
-                                        x => x.StepenPrinadl == NewCij[i].Lj[j].ConcNl.PhazConc.Max(z => z.StepenPrinadl));
-                                NewCij[i].Lj[j].ConcNl.DePhazConc = NewCij[i].Lj[j].ConcNl.PhazConc[i1].StepenPrinadl >=
-                                                                   (double)0.8
+                            //By FREEM:
+                            //if (NewCij[i].Lj[j].ConcNl.PhazConc[0].StepenPrinadl == 1 &&
+                            //    NewCij[i].Lj[j].ConcNl.PhazConc[1].StepenPrinadl == 0 &&
+                            //    NewCij[i].Lj[j].ConcNl.PhazConc[2].StepenPrinadl == 0)
+                            //{
+                            //    NewCij[i].Lj[j].ConcNl.DePhazConc = 0;
+                            //}
+                            //else
+                            //{
+                            //    var i1 =
+                            //        NewCij[i].Lj[j].ConcNl.PhazConc.FindIndex(
+                            //            x => x.StepenPrinadl == NewCij[i].Lj[j].ConcNl.PhazConc.Max(z => z.StepenPrinadl));
+                            //    NewCij[i].Lj[j].ConcNl.DePhazConc = NewCij[i].Lj[j].ConcNl.PhazConc[i1].StepenPrinadl >=
+                            //                                       (double)0.8
+                            //                                           ? DePhazConcSrMax(
+                            //                                               NewCij[i].Lj[j].ConcNl.PhazConc, i1)
+                            //                                           : DePhazConcMct(NewCij[i].Lj[j].ConcNl.PhazConc);
+                            //}
+
+                            
+
+                            if ( NewCij[ i ].Lj[ j ].ConcNl.PhazConc[ 0 ] == 1 && NewCij[ i ].Lj[ j ].ConcNl.PhazConc[ 1 ] == 0 && NewCij[ i ].Lj[ j ].ConcNl.PhazConc[ 2 ]== 0 ) {
+                                NewCij[ i ].Lj[ j ].ConcNl.DePhazConc = 0;
+                            } else {
+                                //Переписываем запрос, т.к. для массива он невозможен:
+                                int i1 = 0;
+                                double mx = NewCij[i].Lj[j].ConcNl.PhazConc.Max();
+                                for (int f = 0; f < 3; f++ ){
+                                    if ( NewCij[ i ].Lj[ j ].ConcNl.PhazConc[f] == mx ){
+                                        i1 = f;
+                                        break;
+                                    }
+                                }                                     
+                                NewCij[ i ].Lj[ j ].ConcNl.DePhazConc = NewCij[ i ].Lj[ j ].ConcNl.PhazConc[ i1 ] >=
+                                                                   ( double )0.8
                                                                        ? DePhazConcSrMax(
-                                                                           NewCij[i].Lj[j].ConcNl.PhazConc, i1)
-                                                                       : DePhazConcMct(NewCij[i].Lj[j].ConcNl.PhazConc);
+                                                                           NewCij[ i ].Lj[ j ].ConcNl.PhazConc, i1 )
+                                                                       : DePhazConcMct( NewCij[ i ].Lj[ j ].ConcNl.PhazConc );
                             }
                         }
                     });
